@@ -1,5 +1,5 @@
 import { CustomEditor } from "../components/editor/CustomEditor";
-import { CompileButton } from "../components/editor/CompileButton";
+
 import Image from "next/image";
 import { useState } from "react";
 
@@ -23,9 +23,7 @@ export default function Home() {
       </div>
 
       <CustomEditor />
-      <div className="flex justify-end w-full mt-4">
-        <CompileButton  />
-      </div>
+      
     </main>
   );
 }
