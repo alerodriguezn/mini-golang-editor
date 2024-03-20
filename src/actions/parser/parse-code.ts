@@ -26,21 +26,16 @@ export const parseCode = async (code: string) => {
       throw new Error("Failed to fetch");
     }
 
-    const data: ParserResponse  = await response.json();
-
-
-
+    const data: ParserResponse = await response.json();
 
     return {
       message: data.message,
-      errors: data.errors, 
+      errors: data.errors,
     };
   } catch (error) {
-
-  
     return {
       message: "Error occurred while parsing code",
-      errors: [], 
+      errors: [],
     };
   }
 };

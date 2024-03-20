@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loader, useMonaco } from "@monaco-editor/react";
+import { OnMount, loader, useMonaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import Editor from "@monaco-editor/react";
 import { parseCode } from "@/actions/parser/parse-code";
 import { ubuntu } from "@/config/fonts";
 import { CompileButton } from "./CompileButton";
 import { testFiles } from "@/utils/test-files";
+import theme from "@/lib/monaco/themes/night-owl.json"
 
 interface ErrorMarker {
   message: string;
@@ -27,14 +28,18 @@ export const CustomEditor = () => {
   const [currentErrors, setCurrentErrors] = useState<ErrorMarker[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
 
+  const handleMount: OnMount = (editor, monaco) => {
+    monaco.editor.defineTheme("night-owl", theme as any);
+    monaco.editor.setTheme("night-owl");
+  };
+
   useEffect(() => {
     handleEditorChange(defaultCode);
   }, []);
 
   useEffect(() => {
     handleEditorChange(value);
-  },[value])
-
+  }, [value]);
 
   async function handleEditorChange(value: string | undefined) {
     if (!value) return;
@@ -54,7 +59,7 @@ export const CustomEditor = () => {
           "parser",
           errors.map((error) => {
             return {
-              startLineNumber: error.line ,
+              startLineNumber: error.line,
               startColumn: error.column,
               endLineNumber: error.line,
               endColumn: error.column,
@@ -70,22 +75,19 @@ export const CustomEditor = () => {
     setCurrentMessage(message);
   }
 
-  
-
   const handleTest = (testNum: number) => {
     setValue(testFiles[testNum]);
-
-
   };
 
   return (
     <div className="flex flex-col gap-6 w-full mb-4">
       <Editor
-        theme="vs-dark"
+        theme={"night-owl"}
         height="50vh"
         className="rounded-lg border-4 border-slate-800 w-full h-96"
         defaultLanguage="go"
         defaultValue={defaultCode}
+        onMount={handleMount}
         onChange={handleEditorChange}
         value={value}
       />
