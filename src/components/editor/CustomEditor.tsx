@@ -8,7 +8,7 @@ import { parseCode } from "@/actions/parser/parse-code";
 import { ubuntu } from "@/config/fonts";
 import { CompileButton } from "./CompileButton";
 import { testFiles } from "@/utils/test-files";
-import theme from "@/lib/monaco/themes/night-owl.json"
+import theme from "@/lib/monaco/themes/night-owl.json";
 
 interface ErrorMarker {
   message: string;
@@ -27,6 +27,7 @@ export const CustomEditor = () => {
   const [value, setValue] = useState(defaultCode);
   const [currentErrors, setCurrentErrors] = useState<ErrorMarker[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [currentLine, setCurrentLine] = useState(0);
 
   const handleMount: OnMount = (editor, monaco) => {
     monaco.editor.defineTheme("night-owl", theme as any);
@@ -75,6 +76,9 @@ export const CustomEditor = () => {
     setCurrentMessage(message);
   }
 
+  const handleMoveToError = (line: number) => {
+    setCurrentLine(line);
+  };
   const handleTest = (testNum: number) => {
     setValue(testFiles[testNum]);
   };
@@ -90,6 +94,7 @@ export const CustomEditor = () => {
         onMount={handleMount}
         onChange={handleEditorChange}
         value={value}
+        line={currentLine}
       />
 
       <div className=" w-full  rounded-lg border-4 border-slate-800 mt-4 bg-zinc-950">
@@ -98,12 +103,9 @@ export const CustomEditor = () => {
           {currentErrors?.length > 0
             ? currentErrors.map((error, index) => {
                 return (
-                  <div key={index} className="text-red-600">
-                    {error.message +
-                      " at line " +
-                      error.line +
-                      " column " +
-                      error.column}
+                  <div key={index} className="text-red-600 flex ">
+                    {error.message + " "} <button className=" underline text-amber-600" onClick={() => handleMoveToError(error.line)}>at line {error.line}</button> 
+                    {", column " + error.column}
                   </div>
                 );
               })
