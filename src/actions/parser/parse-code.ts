@@ -22,7 +22,6 @@ export const parseCode = async (code: string) => {
     });
 
     if (!response.ok) {
-      console.log("Failed to fetch");
       throw new Error("Failed to fetch");
     }
 

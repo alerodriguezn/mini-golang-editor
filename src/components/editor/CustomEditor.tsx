@@ -104,7 +104,13 @@ export const CustomEditor = () => {
             ? currentErrors.map((error, index) => {
                 return (
                   <div key={index} className="text-red-600 flex ">
-                    {error.message + " "} <button className=" underline text-amber-600" onClick={() => handleMoveToError(error.line)}>at line {error.line}</button> 
+                    {error.message + " "}{" "}
+                    <button
+                      className=" underline text-amber-600"
+                      onClick={() => handleMoveToError(error.line)}
+                    >
+                      at line {error.line}
+                    </button>
                     {", column " + error.column}
                   </div>
                 );
