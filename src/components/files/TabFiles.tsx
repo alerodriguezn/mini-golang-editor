@@ -5,12 +5,21 @@ import { CustomEditor } from "../editor/CustomEditor";
 import { useFilesStore } from "@/store/files-store";
 import Image from "next/image";
 import { IoTrash } from "react-icons/io5";
+import { useEffect } from "react";
 
 
 export const TabFiles = () => {
+
   const files = useFilesStore((state) => state.files);
   const setCurrentFile = useFilesStore((state) => state.setCurrentFile);
   const deleteFile = useFilesStore((state) => state.deleteFile);
+
+  useEffect (() => {
+    if (files.length > 0) {
+      setCurrentFile(files[0]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleTabChange = (name: string) => {
     const file = files.find((f) => f.name === name);

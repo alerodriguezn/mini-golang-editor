@@ -17,13 +17,6 @@ interface ErrorMarker {
   column: number;
 }
 
-const defaultCode = `package main;
-
-func main() int{
-
-};
-`;
-
 type File = {
   name: string;
   content: string;
@@ -34,7 +27,8 @@ interface Props {
 }
 
 export const CustomEditor = ({file}: Props) => {
-  const [value, setValue] = useState(defaultCode);
+
+  const [value, setValue] = useState(file.content || "");
   const [currentErrors, setCurrentErrors] = useState<ErrorMarker[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [currentLine, setCurrentLine] = useState(0);
@@ -45,6 +39,7 @@ export const CustomEditor = ({file}: Props) => {
   const handleMount: OnMount = (editor, monaco) => {
     monaco.editor.defineTheme("night-owl", theme as any);
     monaco.editor.setTheme("night-owl");
+    console.log("editor mounted");
   
   };
 
@@ -53,7 +48,8 @@ export const CustomEditor = ({file}: Props) => {
     if (file.content) {
       setValue(file.content);
     }
-    handleEditorChange(defaultCode);
+
+    handleEditorChange(file.content);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -111,12 +107,13 @@ export const CustomEditor = ({file}: Props) => {
 
   return (
     <div className="flex flex-col gap-6 w-full mb-4">
+    
       <Editor
         theme={"night-owl"}
         height="50vh"
         className="rounded-lg border-4 border-slate-800 w-full h-96"
         defaultLanguage="go"
-        defaultValue={defaultCode}
+        defaultValue={file.content || ""}
         onMount={handleMount}
         onChange={handleEditorChange}
         value={value}
