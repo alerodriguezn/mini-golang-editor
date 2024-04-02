@@ -1,7 +1,8 @@
-import { CustomEditor } from "../components/editor/CustomEditor";
-
-import Image from "next/image";
 import { useState } from "react";
+import Image from "next/image";
+import { CustomEditor } from "../components/editor/CustomEditor";
+import { TabFiles } from "../components/files/TabFiles";
+import  NewFileModal  from '../components/files/NewFileButton';
 
 export default function Home() {
   return (
@@ -17,11 +18,16 @@ export default function Home() {
           alt="Go Logo"
           width={80}
           height={80}
-          className="my-6"
+          className=""
         />
       </div>
 
-      <CustomEditor />
+      <NewFileModal/>
+
+      <TabFiles/>
+
+
+    
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { OnMount, loader, useMonaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import Editor from "@monaco-editor/react";
@@ -9,6 +9,7 @@ import { ubuntu } from "@/config/fonts";
 import { CompileButton } from "./CompileButton";
 import { testFiles } from "@/utils/test-files";
 import theme from "@/lib/monaco/themes/night-owl.json";
+import { useFilesStore } from "@/store/files-store";
 
 interface ErrorMarker {
   message: string;
@@ -23,26 +24,49 @@ func main() int{
 };
 `;
 
-export const CustomEditor = () => {
+type File = {
+  name: string;
+  content: string;
+};
+
+interface Props {
+  file: File
+}
+
+export const CustomEditor = ({file}: Props) => {
   const [value, setValue] = useState(defaultCode);
   const [currentErrors, setCurrentErrors] = useState<ErrorMarker[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [currentLine, setCurrentLine] = useState(0);
 
+  const currentFile = useFilesStore((state) => state.currentFile);
+  const updateFile = useFilesStore((state) => state.updateFile);
+
   const handleMount: OnMount = (editor, monaco) => {
     monaco.editor.defineTheme("night-owl", theme as any);
     monaco.editor.setTheme("night-owl");
+  
   };
 
   useEffect(() => {
+    
+    if (file.content) {
+      setValue(file.content);
+    }
     handleEditorChange(defaultCode);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     handleEditorChange(value);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
+
   async function handleEditorChange(value: string | undefined) {
+
+    updateFile({ name: currentFile?.name || "", content: value || "" });
     if (!value) return;
     const { message, errors } = await parseCode(value);
     if (!errors) {
@@ -71,6 +95,8 @@ export const CustomEditor = () => {
         );
       });
     }
+
+    updateFile({ name: currentFile?.name || "", content: value });
 
     setCurrentErrors(errors);
     setCurrentMessage(message);
@@ -123,7 +149,8 @@ export const CustomEditor = () => {
           </p>
         </div>
       </div>
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-end items-center">
+        <h4 className="font-light text-sm mr-3">**Archivos de Prueba, no hace falta darle a compilar, el parser se ejecuta cuando cambia el código </h4>
         <button
           className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all font-bold w-[15%] mr-2"
           onClick={() => handleTest(0)}
