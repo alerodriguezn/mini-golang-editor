@@ -11,7 +11,7 @@ interface State {
   currentFile: File | null;
   addFile: (file: File) => void;
   updateFile: (file: File) => void;
-  setCurrentFile: (file: File) => void;
+  // setCurrentFile: (file: File) => void;
   deleteFile: (name: string) => void;
 }
 

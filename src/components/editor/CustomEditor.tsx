@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { OnMount, loader, useMonaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import Editor from "@monaco-editor/react";
@@ -23,46 +23,44 @@ type File = {
 };
 
 interface Props {
-  file: File
+  file: File;
 }
 
-export const CustomEditor = ({file}: Props) => {
-
+export const CustomEditor = ({ file }: Props) => {
   const [value, setValue] = useState(file.content || "");
   const [currentErrors, setCurrentErrors] = useState<ErrorMarker[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [currentLine, setCurrentLine] = useState(0);
 
-  const currentFile = useFilesStore((state) => state.currentFile);
+  // const currentFile = useFilesStore((state) => state.currentFile);
   const updateFile = useFilesStore((state) => state.updateFile);
+
 
   const handleMount: OnMount = (editor, monaco) => {
     monaco.editor.defineTheme("night-owl", theme as any);
     monaco.editor.setTheme("night-owl");
-    console.log("editor mounted");
-  
   };
 
-  useEffect(() => {
-    
-    if (file.content) {
-      setValue(file.content);
-    }
 
-    handleEditorChange(file.content);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {
+    setValue(file.content || "");
+  }, [file]);
 
   useEffect(() => {
     handleEditorChange(value);
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  },[])
+
+
 
 
   async function handleEditorChange(value: string | undefined) {
 
-    updateFile({ name: currentFile?.name || "", content: value || "" });
+    
+    setValue(value || "");
+
+    updateFile({ name: file.name, content: value || "" });
+ 
     if (!value) return;
     const { message, errors } = await parseCode(value);
     if (!errors) {
@@ -92,7 +90,7 @@ export const CustomEditor = ({file}: Props) => {
       });
     }
 
-    updateFile({ name: currentFile?.name || "", content: value });
+    
 
     setCurrentErrors(errors);
     setCurrentMessage(message);
@@ -102,12 +100,16 @@ export const CustomEditor = ({file}: Props) => {
     setCurrentLine(line);
   };
   const handleTest = (testNum: number) => {
+
     setValue(testFiles[testNum]);
+    updateFile({ name: file.name, content: testFiles[testNum] });
+    handleEditorChange(testFiles[testNum]);
+    
+    
   };
 
   return (
     <div className="flex flex-col gap-6 w-full mb-4">
-    
       <Editor
         theme={"night-owl"}
         height="50vh"
@@ -147,7 +149,10 @@ export const CustomEditor = ({file}: Props) => {
         </div>
       </div>
       <div className="w-full flex justify-end items-center">
-        <h4 className="font-light text-sm mr-3">**Archivos de Prueba, no hace falta darle a compilar, el parser se ejecuta cuando cambia el código </h4>
+        <h4 className="font-light text-sm mr-3">
+          **Archivos de Prueba, no hace falta darle a compilar, el parser se
+          ejecuta cuando cambia el código{" "}
+        </h4>
         <button
           className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all font-bold w-[15%] mr-2"
           onClick={() => handleTest(0)}

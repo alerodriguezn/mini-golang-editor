@@ -11,20 +11,23 @@ import { useEffect } from "react";
 export const TabFiles = () => {
 
   const files = useFilesStore((state) => state.files);
-  const setCurrentFile = useFilesStore((state) => state.setCurrentFile);
+  //const setCurrentFile = useFilesStore((state) => state.setCurrentFile);
   const deleteFile = useFilesStore((state) => state.deleteFile);
 
-  useEffect (() => {
-    if (files.length > 0) {
-      setCurrentFile(files[0]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+ 
+  // useEffect(() => {
+  //   if (files.length) {
+  //     setCurrentFile(files[0]);
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [files]);
+
 
   const handleTabChange = (name: string) => {
-    const file = files.find((f) => f.name === name);
-    if (!file) return;
-    setCurrentFile(file);
+    // const file = files.find((f) => f.name === name);
+    // if (!file) return;
+    // setCurrentFile(file);
+
   };
 
   if (!files.length) {
