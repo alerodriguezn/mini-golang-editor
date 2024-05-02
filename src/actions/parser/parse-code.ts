@@ -14,6 +14,7 @@ interface ParserResponse {
 export const parseCode = async (code: string) => {
   try {
     const response = await fetch("http://ec2-18-191-238-90.us-east-2.compute.amazonaws.com:8000/api/parser", {
+      
       method: "POST",
       headers: {
         "Content-Type": "application/json",
