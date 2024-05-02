@@ -171,7 +171,7 @@ export const CustomEditor = ({ file }: Props) => {
         >
           Test Errors ❌
         </button>
-        <CompileButton />
+        {/* <CompileButton /> */}
       </div>
     </div>
   );
