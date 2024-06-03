@@ -26,11 +26,26 @@ interface Props {
   file: File;
 }
 
+const defaultCode = `package main;
+
+func main() {
+
+  //SELECCIONA ALGUNO DE LOS BOTONES DE ABAJO PARA CORRER LOS TEST'S o Escribe tu propio código
+  println(0);
+  return;
+
+};`
+;
+
 export const CustomEditor = ({ file }: Props) => {
-  const [value, setValue] = useState(file.content || "");
+  const [value, setValue] = useState(file.content || defaultCode );
   const [currentErrors, setCurrentErrors] = useState<ErrorMarker[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [currentLine, setCurrentLine] = useState(0);
+  const [currentOutput, setCurrentOutput] = useState("");
+  const [llCode, setLlCode] = useState("");
+
+
 
   // const currentFile = useFilesStore((state) => state.currentFile);
   const updateFile = useFilesStore((state) => state.updateFile);
@@ -62,7 +77,22 @@ export const CustomEditor = ({ file }: Props) => {
     updateFile({ name: file.name, content: value || "" });
  
     if (!value) return;
-    const { message, errors } = await parseCode(value);
+    const { message, errors, output, ll } = await parseCode(value);
+
+    if (output) {
+      setCurrentOutput(output);
+    }else{
+      setCurrentOutput("");
+    }
+
+    if (ll) {
+      setLlCode(ll);
+    }else {
+      setLlCode("");
+    }
+
+
+
     if (!errors) {
       loader.init().then((monaco) => {
         monaco.editor.setModelMarkers(
@@ -94,6 +124,7 @@ export const CustomEditor = ({ file }: Props) => {
 
     setCurrentErrors(errors);
     setCurrentMessage(message);
+    
   }
 
   const handleMoveToError = (line: number) => {
@@ -141,6 +172,12 @@ export const CustomEditor = ({ file }: Props) => {
                 );
               })
             : ""}
+            <p >
+              {currentOutput.split("\n").map((line, index) => {
+                return <p key={index} className="text-white">{line}</p>;
+              }
+              )}
+            </p>
         </div>
         <div>
           <p className={`${ubuntu.className} p-2 ml-2 text-amber-600`}>
@@ -154,25 +191,44 @@ export const CustomEditor = ({ file }: Props) => {
           ejecuta cuando cambia el código{" "}
         </h4>
         <button
-          className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all font-bold w-[15%] mr-2"
+          className="bg-blue-600 hover:bg-blue-800 text-white  py-2 px-4 rounded transition-all font-bold w-18 h-14 mr-2"
           onClick={() => handleTest(0)}
         >
-          Test 1 ✅
+          Test Arreglos y Variables ✅
         </button>
         <button
-          className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all font-bold w-[15%] mr-2"
+          className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all font-bold  w-18 h-14 mr-2"
           onClick={() => handleTest(1)}
         >
-          Test 2 ✅
+          Test If Else ✅
         </button>
         <button
-          className="bg-red-600 hover:bg-red-800 text-white py-2 px-4 rounded transition-all font-bold w-[15%] mr-2"
+          className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all font-bold w-18 h-14 mr-2"
           onClick={() => handleTest(2)}
         >
-          Test Errors ❌
+          Test Funciones y Len ✅
         </button>
         {/* <CompileButton /> */}
       </div>
+
+      <div>
+        { 
+          llCode !== "" ?
+          <div className=" w-full  rounded-lg border-4 border-slate-800 mt-4 bg-zinc-950">
+            <h2 className="text-sm font-light p-1 ml-2 text-slate-400">LLVM Output</h2>
+            <div className={`${ubuntu.className} p-2 ml-2`}>
+              <p className="text-white">{
+                llCode.split("\n").map((line, index) => {
+                  return <p key={index} className="text-white">{line}</p>;
+                }
+                )
+              }</p>
+            </div>
+          </div> : ""
+        }
+      </div>
+
+            
     </div>
   );
 };

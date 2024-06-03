@@ -9,11 +9,14 @@ interface ErrorMarker {
 interface ParserResponse {
   message: string;
   errors: ErrorMarker[];
+  output: string;
+  ll : string;
+
 }
 
 export const parseCode = async (code: string) => {
   try {
-    const response = await fetch("http://ec2-18-191-238-90.us-east-2.compute.amazonaws.com:8000/api/parser", {
+    const response = await fetch("http://localhost:8000/api/parser", {
 
       method: "POST",
       headers: {
@@ -28,9 +31,13 @@ export const parseCode = async (code: string) => {
 
     const data: ParserResponse = await response.json();
 
+    console.log(data);
+
     return {
       message: data.message,
       errors: data.errors,
+      output: data.output,
+      ll : data.ll
     };
   } catch (error) {
     return {
