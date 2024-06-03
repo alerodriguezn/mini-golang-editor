@@ -16,7 +16,7 @@ interface ParserResponse {
 
 export const parseCode = async (code: string) => {
   try {
-    const response = await fetch("http://localhost:8000/api/parser", {
+    const response = await fetch("http://20.55.105.116:8000/api/parser", {
 
       method: "POST",
       headers: {
